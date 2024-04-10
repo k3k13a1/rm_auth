@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rizzmatch/rm_auth/internal/core/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -56,6 +57,8 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 
 	fmt.Println(id)
 	fmt.Println(id.InsertedID)
+	objectId := id.InsertedID.(primitive.ObjectID)
+	fmt.Println(objectId)
 	fmt.Println(uuid.Max.UnmarshalBinary(id.InsertedID.([]byte)))
 
 	return id.InsertedID.(uuid.UUID), nil
