@@ -71,8 +71,10 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 
 	var tmpUser = new(models.User)
 
+	filter := bson.D{{Key: "email", Value: email}}
+
 	usersCollection := s.db.Database("rizzmatch").Collection("users")
-	err := usersCollection.FindOne(ctx, bson.M{"email": email}).Decode(tmpUser)
+	err := usersCollection.FindOne(ctx, filter).Decode(tmpUser)
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s: %w", op, err)
 	}
