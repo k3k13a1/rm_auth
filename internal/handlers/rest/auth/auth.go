@@ -25,7 +25,7 @@ func Register(c echo.Context, a Auth) error {
 	email := c.FormValue("email")
 	pass := c.FormValue("password")
 
-	uid, err := a.Register(c.Request().Context(), email, pass)
+	uid, err := a.Register(context.TODO(), email, pass)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
