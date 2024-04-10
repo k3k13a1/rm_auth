@@ -45,6 +45,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 	// TODO: add validation
+	fmt.Println("hueta")
 	id, err := usersCollection.InsertOne(ctx, models.User{
 		ID:       uuidv6,
 		Email:    email,
@@ -53,6 +54,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
+	fmt.Println("hueta2")
 
 	return id.InsertedID.(uuid.UUID), nil
 }
