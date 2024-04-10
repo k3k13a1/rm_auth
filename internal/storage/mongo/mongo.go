@@ -57,7 +57,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 
 	fmt.Println(id)
 	fmt.Println(id.InsertedID)
-	objectId := id.InsertedID.(primitive.ObjectID)
+	objectId := id.InsertedID.(primitive.Binary).Data
 	fmt.Println(objectId)
 	fmt.Println(uuid.Max.UnmarshalBinary(id.InsertedID.([]byte)))
 
