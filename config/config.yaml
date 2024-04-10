@@ -1,0 +1,8 @@
+env: "local"
+token_ttl: "12h"
+refresh_token_ttl: "5h"
+jwt_secret: "secret_token_key"
+rest:
+  host: "0.0.0.0"
+  port: 9241
+  timeout: 10m
