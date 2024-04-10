@@ -15,7 +15,7 @@ func main() {
 
 	application := app.New(log, cfg.REST.Port, cfg.REST.Host, cfg.REST.Timeout)
 
-	go application.RESTServer.Run()
+	application.RESTServer.Run()
 
 	// TODO: graceful shutdown
 }
