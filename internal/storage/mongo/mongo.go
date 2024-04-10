@@ -56,6 +56,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 
 	fmt.Println(id)
 	fmt.Println(id.InsertedID)
+	fmt.Println(id.InsertedID.(uuid.UUID))
 
 	return id.InsertedID.(uuid.UUID), nil
 }
