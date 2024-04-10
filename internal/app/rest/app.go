@@ -47,7 +47,7 @@ func (a *App) Run() error {
 
 	a.log.Info("starting this shit server", slog.String("op", op))
 
-	if err := a.RESTServer.Start(":1323"); err != nil && err != http.ErrServerClosed {
+	if err := a.RESTServer.Start(":9241"); err != nil && err != http.ErrServerClosed {
 		a.log.Error("shutting down the server")
 	}
 	return nil
