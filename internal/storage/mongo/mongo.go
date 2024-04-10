@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rizzmatch/rm_auth/internal/core/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -63,4 +64,34 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 	}
 
 	return lastInserdUUID, nil
+}
+
+func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
+	const op = "storage.mongo.User"
+
+	var tmpUser = new(models.User)
+
+	usersCollection := s.db.Database("rizzmatch").Collection("users")
+	err := usersCollection.FindOne(ctx, bson.M{"email": email}).Decode(tmpUser)
+	if err != nil {
+		return models.User{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return *tmpUser, nil
+}
+
+func (s *Storage) IsAdmin(ctx context.Context, email string) (bool, error) {
+	const op = "storage.mongo.isAdmin"
+
+	tmpUser := new(models.User)
+	usersCollection := s.db.Database("rizzmatch").Collection("users")
+	err := usersCollection.FindOne(ctx, bson.M{"email": email}).Decode(tmpUser)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if email == "admin" {
+		return true, nil
+	}
+	return false, nil
 }

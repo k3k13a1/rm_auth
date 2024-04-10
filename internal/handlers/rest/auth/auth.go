@@ -14,6 +14,11 @@ type Auth interface {
 		email string,
 		pass string,
 	) (uuid.UUID, error)
+	Login(
+		ctx context.Context,
+		email string,
+		passHash string,
+	) (string, error)
 }
 
 // type serverAPI struct {
@@ -31,4 +36,17 @@ func Register(c echo.Context, a Auth) error {
 	}
 
 	return c.JSON(http.StatusOK, uid)
+}
+
+func Login(c echo.Context, a Auth) error {
+
+	email := c.FormValue("email")
+	pass := c.FormValue("password")
+
+	token, err := a.Login(context.TODO(), email, pass)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, token)
 }

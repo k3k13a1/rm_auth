@@ -25,7 +25,7 @@ func New(
 		log.Error("failed to connect to mongo", err)
 	}
 
-	authService := auth.New(log, mongoStorage, timeout)
+	authService := auth.New(log, mongoStorage, mongoStorage, timeout)
 
 	restApp := restapp.New(log, *authService, host, restPort, timeout)
 
