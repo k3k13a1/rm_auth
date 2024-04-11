@@ -26,12 +26,16 @@ func New(
 	timeout time.Duration,
 ) *App {
 	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
 
-	registerHandler := func(c echo.Context) error {
+	e.GET("/login", func(c echo.Context) error {
+		return authrest.Login(c, &authService)
+	})
+
+	e.POST("/register", func(c echo.Context) error {
 		return authrest.Register(c, &authService)
-	}
-
-	e.POST("/register", registerHandler)
+	})
 
 	return &App{
 		log:        log,

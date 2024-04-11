@@ -1,6 +1,10 @@
 package main
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/rizzmatch/rm_auth/internal/app"
 	"github.com/rizzmatch/rm_auth/internal/config"
 	"github.com/rizzmatch/rm_auth/internal/logger"
@@ -17,5 +21,11 @@ func main() {
 
 	application.RESTServer.Run()
 
-	// TODO: graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+
+	// TODO: application.RESTServer.Stop()
+	log.Info("Gracefully stoped")
 }

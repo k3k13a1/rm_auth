@@ -37,7 +37,7 @@ func (s *Storage) Close() error {
 	return s.db.Disconnect(context.TODO())
 }
 
-func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (uid uuid.UUID, err error) {
+func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (uuid.UUID, error) {
 	const op = "storage.mongo.SaveUser"
 
 	usersCollection := s.db.Database("rizzmatch").Collection("users")
