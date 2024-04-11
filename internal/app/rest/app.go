@@ -1,6 +1,7 @@
 package restapp
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"time"
@@ -55,4 +56,8 @@ func (a *App) Run() error {
 		a.log.Error("shutting down the server")
 	}
 	return nil
+}
+
+func (a *App) Stop() error {
+	return a.RESTServer.Shutdown(context.TODO())
 }

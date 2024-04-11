@@ -26,6 +26,6 @@ func main() {
 
 	<-stop
 
-	// TODO: application.RESTServer.Stop()
+	application.RESTServer.Stop()
 	log.Info("Gracefully stoped")
 }
