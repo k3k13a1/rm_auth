@@ -37,12 +37,12 @@ func SetupConfig() *Config {
 
 	yamlFile, err := os.ReadFile("./config/config.yaml")
 	if err != nil {
-		panic("config zapili blya")
+		panic("unable to read config file")
 	}
 
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
-		panic("config hueta, peredelai")
+		panic("did not parse config file")
 	}
 
 	return &config

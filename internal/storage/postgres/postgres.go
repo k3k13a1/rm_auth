@@ -15,10 +15,12 @@ type Storage struct {
 	db *pgx.Conn
 }
 
-func New() (*Storage, error) {
+func New(login, password, dbName, host string, port int, sslmode string) (*Storage, error) {
 	const op = "storage.postgres.New"
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres:postgres@localhost:5432/rizzmatch?sslmode=disable")
+	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=%s", login, password, host, port, dbName, sslmode)
+
+	db, err := pgx.Connect(context.Background(), connStr)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

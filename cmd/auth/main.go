@@ -17,7 +17,7 @@ func main() {
 	log.Info("zapili")
 	log.Debug("zapili")
 
-	application := app.New(log, cfg.REST.Port, cfg.REST.Host, cfg.REST.Timeout)
+	application := app.New(log, *cfg)
 
 	application.RESTServer.Run()
 
