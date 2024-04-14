@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/rizzmatch/rm_auth/internal/core/jwt"
 	"github.com/rizzmatch/rm_auth/internal/core/models"
 	"github.com/rizzmatch/rm_auth/internal/storage"
@@ -31,7 +30,7 @@ type UserSaver interface {
 		ctx context.Context,
 		email string,
 		passHash []byte,
-	) (uid uuid.UUID, err error)
+	) (uid int, err error)
 }
 
 type UserProvider interface {
@@ -92,7 +91,7 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, error
 	return token, nil
 }
 
-func (a *Auth) Register(ctx context.Context, email string, pass string) (uuid.UUID, error) {
+func (a *Auth) Register(ctx context.Context, email string, pass string) (int, error) {
 	const op = "auth.Register"
 
 	log := a.log.With(
@@ -106,14 +105,14 @@ func (a *Auth) Register(ctx context.Context, email string, pass string) (uuid.UU
 	if err != nil {
 		log.Error("failed to hash password", slog.String("error", err.Error()))
 
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	id, err := a.usrSaver.SaveUser(ctx, email, passHash)
 	if err != nil {
 		log.Error("failed to save user", slog.String("error", err.Error()))
 
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return id, nil

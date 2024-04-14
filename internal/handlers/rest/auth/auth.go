@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,7 +12,7 @@ type Auth interface {
 		ctx context.Context,
 		email string,
 		pass string,
-	) (uuid.UUID, error)
+	) (int, error)
 	Login(
 		ctx context.Context,
 		email string,

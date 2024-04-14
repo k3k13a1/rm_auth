@@ -6,7 +6,7 @@ import (
 
 	restapp "github.com/rizzmatch/rm_auth/internal/app/rest"
 	"github.com/rizzmatch/rm_auth/internal/services/auth"
-	"github.com/rizzmatch/rm_auth/internal/storage/redis"
+	"github.com/rizzmatch/rm_auth/internal/storage/postgres"
 )
 
 type App struct {
@@ -20,12 +20,12 @@ func New(
 	timeout time.Duration,
 ) *App {
 
-	redisStorage, err := redis.New()
+	postgresStorage, err := postgres.New()
 	if err != nil {
-		log.Error("failed to connect to mongo", err)
+		log.Error("failed to connect to db", err)
 	}
 
-	authService := auth.New(log, redisStorage, redisStorage, timeout)
+	authService := auth.New(log, postgresStorage, postgresStorage, timeout)
 
 	restApp := restapp.New(log, *authService, host, restPort, timeout)
 
