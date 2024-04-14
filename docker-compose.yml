@@ -1,0 +1,54 @@
+version: '3'
+name: auth_service
+
+services:
+  postgres:
+    image: postgres:16.2
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+
+  migrations:
+    image: ghcr.io/kukymbr/goose-docker:3.19.2
+    container_name: migrations_test
+    restart: no
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=host=${POSTGRES_HOST} port=${POSTGRES_PORT} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB}
+      - GOOSE_VERBOSE=true
+      - GOOSE_COMMAND=up
+      #- GOOSE_COMMAND=${GOOSE_COMMAND}
+    volumes:
+      - ./migrations:/migrations
+
+  backend:
+    image: backend_auth
+    container_name: backend_auth
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: Dockerfile.backend
+    env_file:
+      - .env
+    ports:
+      - "${SERVER_PORT}:9241"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres:
+    driver: local
