@@ -18,14 +18,14 @@ func New(
 	cfg config.Config,
 ) *App {
 
-	postgresStorage, err := postgres.New(cfg.POSTGRES.User, cfg.POSTGRES.Password, cfg.POSTGRES.Database, cfg.POSTGRES.Host, cfg.POSTGRES.Port, cfg.POSTGRES.SSLMode)
+	postgresStorage, err := postgres.New(cfg.PSQLUser, cfg.PSQLUser, cfg.PSQLDB, cfg.PSQLHost, cfg.PSQLPort, cfg.PSQLSSLMode)
 	if err != nil {
 		log.Error("failed to connect to db", err)
 	}
 
-	authService := auth.New(log, postgresStorage, postgresStorage, cfg.REST.Timeout)
+	authService := auth.New(log, postgresStorage, postgresStorage, cfg.RESTTimeout)
 
-	restApp := restapp.New(log, *authService, cfg.REST.Host, cfg.REST.Port, cfg.REST.Timeout)
+	restApp := restapp.New(log, *authService, cfg.RESTHost, cfg.RESTPort, cfg.RESTTimeout)
 
 	return &App{
 		RESTServer: restApp,

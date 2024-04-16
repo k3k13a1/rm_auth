@@ -1,49 +1,46 @@
 package config
 
 import (
-	"os"
+	"fmt"
 	"time"
 
-	"gopkg.in/yaml.v3"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Env             string         `yaml:"env"`
-	TokenTTL        time.Duration  `yaml:"token_ttl"`
-	RefreshTokenTTL time.Duration  `yaml:"refresh_token_ttl"`
-	JWTSecret       string         `yaml:"jwt_secret"`
-	REST            RESTConfig     `yaml:"rest"`
-	POSTGRES        PostgresConfig `yaml:"postgres"`
-}
-
-type RESTConfig struct {
-	Host    string        `yaml:"host"`
-	Port    int           `yaml:"port"`
-	Timeout time.Duration `yaml:"timeout"`
-}
-
-type PostgresConfig struct {
-	Host           string `yaml:"host"`
-	Port           int    `yaml:"port"`
-	User           string `yaml:"user"`
-	Password       string `yaml:"password"`
-	Database       string `yaml:"database"`
-	SSLMode        string `yaml:"sslmode"`
-	ConnectTimeout int    `yaml:"connect_timeout"`
+	AppEnv          string        `mapstructure:"APP_ENV"`
+	TokenTTL        time.Duration `mapstructure:"TOKEN_TTL"`
+	RefreshTokenTTL time.Duration `mapstructure:"REFRESH_TOKEN_TTL"`
+	JWTSecret       string        `mapstructure:"JWT_SECRET"`
+	RESTHost        string        `mapstructure:"REST_HOST"`
+	RESTPort        int           `mapstructure:"REST_PORT"`
+	RESTTimeout     time.Duration `mapstructure:"REST_TIMEOUT"`
+	PSQLHost        string        `mapstructure:"PSQL_HOST"`
+	PSQLPort        int           `mapstructure:"PSQL_PORT"`
+	PSQLUser        string        `mapstructure:"PSQL_USER"`
+	PSQLPass        string        `mapstructure:"PSQL_PASS"`
+	PSQLDB          string        `mapstructure:"PSQL_DB"`
+	PSQLSSLMode     string        `mapstructure:"PSQL_SSLMODE"`
+	PSQLTimeout     time.Duration `mapstructure:"PSQL_TIMEOUT"`
 }
 
 func SetupConfig() *Config {
-	var config Config
+	cfg := Config{}
+	viper.SetConfigFile("./config/.env")
 
-	yamlFile, err := os.ReadFile("./config/config.yaml")
+	err := viper.ReadInConfig()
 	if err != nil {
-		panic("unable to read config file")
+		panic("did not find config file")
 	}
 
-	err = yaml.Unmarshal(yamlFile, &config)
+	err = viper.Unmarshal(&cfg)
 	if err != nil {
-		panic("did not parse config file")
+		panic(err)
 	}
 
-	return &config
+	if cfg.AppEnv == "development" {
+		fmt.Println("running in development mode")
+	}
+
+	return &cfg
 }
