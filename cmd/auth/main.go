@@ -13,7 +13,7 @@ import (
 func main() {
 	cfg := config.SetupConfig()
 
-	log := logger.SetupLogger(cfg.Env)
+	log := logger.SetupLogger(cfg.AppEnv)
 	log.Info("zapili")
 	log.Debug("zapili")
 
