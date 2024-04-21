@@ -1,8 +1,7 @@
 package app
 
 import (
-	"log/slog"
-
+	"github.com/labstack/gommon/log"
 	restapp "github.com/rizzmatch/rm_auth/internal/app/rest"
 	"github.com/rizzmatch/rm_auth/internal/config"
 	"github.com/rizzmatch/rm_auth/internal/services/auth"
@@ -14,7 +13,6 @@ type App struct {
 }
 
 func New(
-	log *slog.Logger,
 	cfg config.Config,
 ) *App {
 
@@ -23,9 +21,9 @@ func New(
 		log.Error("failed to connect to db", err)
 	}
 
-	authService := auth.New(log, postgresStorage, postgresStorage, cfg.RESTTimeout)
+	authService := auth.New(postgresStorage, postgresStorage, cfg.RESTTimeout)
 
-	restApp := restapp.New(log, *authService, cfg.RESTHost, cfg.RESTPort, cfg.RESTTimeout)
+	restApp := restapp.New(*authService, cfg.RESTHost, cfg.RESTPort, cfg.RESTTimeout)
 
 	return &App{
 		RESTServer: restApp,

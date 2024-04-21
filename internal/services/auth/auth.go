@@ -19,7 +19,6 @@ var (
 )
 
 type Auth struct {
-	log         *slog.Logger
 	usrSaver    UserSaver
 	usrProvider UserProvider
 	tokenTTL    time.Duration
@@ -39,13 +38,11 @@ type UserProvider interface {
 }
 
 func New(
-	log *slog.Logger,
 	userSaver UserSaver,
 	userProvider UserProvider,
 	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
-		log:         log,
 		usrSaver:    userSaver,
 		usrProvider: userProvider,
 		tokenTTL:    tokenTTL,
@@ -55,7 +52,7 @@ func New(
 func (a *Auth) Login(ctx context.Context, email, password string) (string, error) {
 	const op = "auth.Login"
 
-	log := a.log.With(
+	log := slog.With(
 		slog.String("op", op),
 		slog.String("username", email),
 	)
@@ -65,18 +62,18 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, error
 	user, err := a.usrProvider.User(ctx, email)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			a.log.Warn("user not found", slog.String("error", err.Error()))
+			log.Warn("user not found", slog.String("error", err.Error()))
 
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 		}
 
-		a.log.Error("failed to user", slog.String("error", err.Error()))
+		log.Error("failed to user", slog.String("error", err.Error()))
 
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
-		a.log.Info("invalid credentials", slog.String("error", err.Error()))
+		log.Info("invalid credentials", slog.String("error", err.Error()))
 
 		return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 	}
@@ -85,7 +82,7 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, error
 
 	token, err := jwt.NewToken(user, a.tokenTTL)
 	if err != nil {
-		a.log.Error("failed to generate token", slog.String("error", err.Error()))
+		log.Error("failed to generate token", slog.String("error", err.Error()))
 	}
 
 	return token, nil
@@ -94,7 +91,7 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, error
 func (a *Auth) Register(ctx context.Context, email string, pass string) (int, error) {
 	const op = "auth.Register"
 
-	log := a.log.With(
+	log := slog.With(
 		slog.String("op", op),
 		slog.String("username", email),
 	)

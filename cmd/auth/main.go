@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/labstack/gommon/log"
 	"github.com/rizzmatch/rm_auth/internal/app"
 	"github.com/rizzmatch/rm_auth/internal/config"
 	"github.com/rizzmatch/rm_auth/internal/logger"
@@ -13,11 +15,11 @@ import (
 func main() {
 	cfg := config.SetupConfig()
 
-	log := logger.SetupLogger(cfg.AppEnv)
-	log.Info("zapili")
-	log.Debug("zapili")
+	logger.SetupLogger(cfg.AppEnv)
+	slog.Info("zapili")
+	slog.Debug("zapili")
 
-	application := app.New(log, *cfg)
+	application := app.New(*cfg)
 
 	application.RESTServer.Run()
 

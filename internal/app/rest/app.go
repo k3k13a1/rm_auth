@@ -12,7 +12,6 @@ import (
 )
 
 type App struct {
-	log        *slog.Logger
 	RESTServer *echo.Echo
 	host       string
 	port       int
@@ -20,7 +19,6 @@ type App struct {
 }
 
 func New(
-	log *slog.Logger,
 	authService auth.Auth,
 	host string,
 	port int,
@@ -39,7 +37,6 @@ func New(
 	})
 
 	return &App{
-		log:        log,
 		RESTServer: e,
 		host:       host,
 		port:       port,
@@ -50,10 +47,10 @@ func New(
 func (a *App) Run() error {
 	const op = "restapp.Run"
 
-	a.log.Info("starting this shit server", slog.String("op", op))
+	slog.Info("starting this shit server", slog.String("op", op))
 
 	if err := a.RESTServer.Start(":9241"); err != nil && err != http.ErrServerClosed {
-		a.log.Error("shutting down the server")
+		slog.Error("shutting down the server")
 	}
 	return nil
 }

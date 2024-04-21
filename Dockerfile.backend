@@ -1,4 +1,4 @@
-FROM golang:1.22.2-alpine AS BuildStage
+FROM golang:1.22.2 AS BuildStage
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ FROM alpine:latest
 
 COPY --from=BuildStage /app/auth /app/auth
 
-COPY --from=BuildStage app/config/config.yaml /config/config.yaml
+COPY --from=BuildStage /app/config/.env /config/.env
 
 RUN apk --no-cache add ca-certificates tzdata
 
