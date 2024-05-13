@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/labstack/gommon/log"
+	grpcapp "github.com/rizzmatch/rm_auth/internal/app/grpc"
 	restapp "github.com/rizzmatch/rm_auth/internal/app/rest"
 	"github.com/rizzmatch/rm_auth/internal/config"
 	"github.com/rizzmatch/rm_auth/internal/services/auth"
@@ -9,7 +10,8 @@ import (
 )
 
 type App struct {
-	RESTServer *restapp.App
+	RESTSrv *restapp.App
+	GRPCSrv *grpcapp.App
 }
 
 func New(
@@ -21,11 +23,13 @@ func New(
 		log.Error("failed to connect to db", err)
 	}
 
-	authService := auth.New(postgresStorage, postgresStorage, cfg.RESTTimeout)
+	authService := auth.New(postgresStorage, cfg.RESTTimeout)
 
+	grpcApp := grpcapp.New(*authService, cfg.GRPCPort)
 	restApp := restapp.New(*authService, cfg.RESTHost, cfg.RESTPort, cfg.RESTTimeout)
 
 	return &App{
-		RESTServer: restApp,
+		RESTSrv: restApp,
+		GRPCSrv: grpcApp,
 	}
 }

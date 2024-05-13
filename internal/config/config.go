@@ -15,6 +15,7 @@ type Config struct {
 	RESTHost        string        `mapstructure:"REST_HOST"`
 	RESTPort        int           `mapstructure:"REST_PORT"`
 	RESTTimeout     time.Duration `mapstructure:"REST_TIMEOUT"`
+	GRPCPort        int           `mapstructure:"GRPC_PORT"`
 	PSQLHost        string        `mapstructure:"PSQL_HOST"`
 	PSQLPort        int           `mapstructure:"PSQL_PORT"`
 	PSQLUser        string        `mapstructure:"PSQL_USER"`
@@ -26,6 +27,8 @@ type Config struct {
 
 func SetupConfig() *Config {
 	cfg := Config{}
+
+	viper.AutomaticEnv()
 	viper.SetConfigFile("./config/.env")
 
 	err := viper.ReadInConfig()

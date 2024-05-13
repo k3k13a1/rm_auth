@@ -77,3 +77,51 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 func (s *Storage) IsAdmin(ctx context.Context, email string) (bool, error) {
 	return true, nil
 }
+
+func (s *Storage) AddPhone(ctx context.Context, id int64, phone string) error {
+	const op = "storage.postgres.AddPhone"
+
+	stmt := `INSERT INTO phones (user_id, phone) VALUES ($1, $2);`
+
+	if _, err := s.db.Exec(context.Background(), stmt, id, phone); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
+func (s *Storage) EditPhone(ctx context.Context, id int64, phone string) error {
+	const op = "storage.postgres.EditPhone"
+
+	stmt := `UPDATE phones SET phone = $1 WHERE user_id = $2;`
+
+	if _, err := s.db.Exec(context.Background(), stmt, phone, id); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
+func (s *Storage) AddEmail(ctx context.Context, id int64, email string) error {
+	const op = "storage.postgres.AddEmail"
+
+	stmt := `INSERT INTO emails (user_id, email) VALUES ($1, $2);`
+
+	if _, err := s.db.Exec(context.Background(), stmt, id, email); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
+func (s *Storage) EditEmail(ctx context.Context, id int64, email string) error {
+	const op = "storage.postgres.EditEmail"
+
+	stmt := `UPDATE emails SET email = $1 WHERE user_id = $2;`
+
+	if _, err := s.db.Exec(context.Background(), stmt, email, id); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
